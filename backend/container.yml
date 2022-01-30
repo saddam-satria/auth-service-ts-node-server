@@ -1,0 +1,28 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+    ports:
+      - '5438:5432'
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=saddam
+      - POSTGRES_PASSWORD=saddam1209
+      - POSTGRES_DB=users
+    container_name: postgres_database
+  server:
+    build: .
+    image: ts-node-server:1.0
+    depends_on:
+      - postgres
+    ports:
+      - '8000:8000'
+    environment:
+      - PORT=8000
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USERNAME=saddam
+      - POSTGRES_PASSWORD=saddam1209
+      - POSTGRES_DATABASE=users
+      - NODE_ENV=production
+      - SECRET_TOKEN=asdasdawdadawadwad
+    container_name: ts-node-server

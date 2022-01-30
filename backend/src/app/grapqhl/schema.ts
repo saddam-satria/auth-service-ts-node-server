@@ -1,0 +1,10 @@
+import { buildSchema } from 'type-graphql';
+import LoginResolver from './resolvers/login.resolver.';
+import RegisterResolver from './resolvers/register.resolver';
+import UsersResolver from './resolvers/users.resolver';
+
+export default async () => {
+  return await buildSchema({
+    resolvers: [LoginResolver, RegisterResolver, UsersResolver],
+  });
+};
