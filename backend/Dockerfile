@@ -10,4 +10,6 @@ COPY . ./
 
 COPY ormconfig.js ./
 
+RUN yarn run build
+
 CMD [ "yarn", "start" ]
