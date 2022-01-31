@@ -9,7 +9,10 @@ class AuthQuery {
   message?: string;
 
   @Field()
-  token?: string;
+  accessToken?: string;
+
+  @Field()
+  refreshToken?: string;
 }
 
 export default AuthQuery;
