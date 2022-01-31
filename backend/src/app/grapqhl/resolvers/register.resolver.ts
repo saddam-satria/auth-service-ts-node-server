@@ -4,6 +4,8 @@ import AuthMutation from '../mutations/auth.mutation';
 import UsersRepository from '../../repositories/users.repository';
 import UsersEntity from '../../../entities/Users';
 import AuthQuery from '../queries/auth.query';
+import hashModule from '../../modules/hash.module';
+import jwtHelper from '../../helpers/jwt.helper';
 
 @Resolver()
 class RegisterResolver {
@@ -14,14 +16,16 @@ class RegisterResolver {
     try {
       newUser.email = user.email;
       newUser.name = user.name;
-      newUser.password = await usersRepo.hashPassword(user.password);
+      newUser.password = await hashModule.hashPassword(user.password);
       const currentUser: Promise<UsersEntity> = usersRepo.save(newUser);
-      const token: string = usersRepo.generateToken({ email: (await currentUser).email, name: (await currentUser).name, id: (await currentUser).id });
+      const accessToken: string = jwtHelper.accessToken({ email: (await currentUser).email, name: (await currentUser).name, id: (await currentUser).id });
+      const refreshToken: string = jwtHelper.refreshToken({ email: (await currentUser).email, name: (await currentUser).name, id: (await currentUser).id });
 
       return {
         status: 'success',
         message: 'register successfully',
-        token,
+        accessToken,
+        refreshToken,
       };
     } catch (error) {
       return {
