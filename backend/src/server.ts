@@ -22,6 +22,7 @@ import { createConnection } from 'typeorm';
   const apolloServer = new ApolloServer({
     schema: await schema(),
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground],
+    introspection: true,
   });
   await apolloServer.start();
   apolloServer.applyMiddleware({ app, path: '/graphql' });
