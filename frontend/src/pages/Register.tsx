@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { BASE_URL } from '../config/constant';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { registerMutation } from '../graphql/mutations/register.mutation';
 import { userContext } from '../context/user.context';
@@ -13,17 +13,30 @@ interface IUser {
 
 const Register: React.FC = (): JSX.Element => {
   const action = useContext(userContext);
+  const navigate = useNavigate();
   const [user, setUser] = useState<IUser>({
     name: '',
     email: '',
     password: '',
   });
   const [register, { data, error }] = useMutation(registerMutation);
+  const [failedLogin, setFailedLogin] = useState(false);
 
-  if (data) {
-    const { accessToken, refreshToken } = data.register;
-    action.login(accessToken, refreshToken);
-  }
+  useEffect(() => {
+    if (failedLogin) setTimeout(() => setFailedLogin(false), 1500);
+  }, [failedLogin]);
+
+  useEffect(() => {
+    if (data) {
+      const { accessToken, refreshToken } = data.login;
+      action.login(accessToken, refreshToken);
+      return navigate('/');
+    }
+
+    if (error) {
+      return setFailedLogin(true);
+    }
+  }, [navigate, action, data, error]);
 
   return (
     <>
