@@ -1,22 +1,35 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { BASE_URL } from '../config/constant';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { loginMutation } from '../graphql/mutations/login.mutation';
 import { userContext } from '../context/user.context';
 
 const Home: React.FC = (): JSX.Element => {
   const action = useContext(userContext);
+  const navigate = useNavigate();
   const [login, { data, error }] = useMutation(loginMutation);
+  const [failedLogin, setFailedLogin] = useState(false);
   const [user, setUser] = useState({
     email: '',
     password: '',
   });
 
-  if (data) {
-    const { accessToken, refreshToken } = data.login;
-    action.login(accessToken, refreshToken);
-  }
+  useEffect(() => {
+    if (failedLogin) setTimeout(() => setFailedLogin(false), 1500);
+  }, [failedLogin]);
+
+  useEffect(() => {
+    if (data) {
+      const { accessToken, refreshToken } = data.login;
+      action.login(accessToken, refreshToken);
+      return navigate('/');
+    }
+
+    if (error) {
+      return setFailedLogin(true);
+    }
+  }, [navigate, action, data, error]);
 
   return (
     <>
@@ -54,7 +67,7 @@ const Home: React.FC = (): JSX.Element => {
                 </div>
                 <div className="flex flex-col space-y-3">
                   {data && !error && <span className="text-green-600">Success Login</span>}
-                  {error && <span className="text-red-500">{error.message}</span>}
+                  {failedLogin && <span className="text-red-500">{error.message}</span>}
                   <span>
                     Doesn't have an account ?{' '}
                     <Link to="/register" className="text-blue-500">
