@@ -8,10 +8,11 @@ import { UserProvider } from './context/user.context';
 const root = document.getElementById('root-app');
 
 reactDOM.render(
-  <ApolloWrapper>
-    <UserProvider>
+  <UserProvider>
+    <ApolloWrapper>
       <App />
-    </UserProvider>
-  </ApolloWrapper>,
+    </ApolloWrapper>
+    ,
+  </UserProvider>,
   root
 );
