@@ -5,13 +5,13 @@ class AuthQuery {
   @Field()
   status: string;
 
-  @Field()
+  @Field({ nullable: true })
   message?: string;
 
-  @Field()
+  @Field({ nullable: true })
   accessToken?: string;
 
-  @Field()
+  @Field({ nullable: true })
   refreshToken?: string;
 }
 
