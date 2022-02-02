@@ -1,11 +1,12 @@
 import { IPayload } from '../utils/interface/payload.interface';
-import { sign } from 'jsonwebtoken';
+import { sign, verify, JwtPayload } from 'jsonwebtoken';
 import { config } from 'dotenv';
 
 interface IJWTHelper {
   readonly secret_key: any;
   refreshToken(payload: IPayload): string;
   accessToken(payload: IPayload): string;
+  verifyToken(token: string): JwtPayload | string;
 }
 
 class JWTHelper implements IJWTHelper {
@@ -14,10 +15,18 @@ class JWTHelper implements IJWTHelper {
     config();
   }
   public refreshToken(payload: IPayload): string {
-    return sign(payload, this.secret_key);
+    return sign(payload, this.secret_key, {
+      expiresIn: '14d',
+    });
   }
-  public accessToken(payload: IPayload): string {
-    return sign(payload, this.secret_key);
+  public accessToken(payload: IPayload | JwtPayload): string {
+    return sign(payload, this.secret_key, {
+      expiresIn: '1m',
+    });
+  }
+  public verifyToken(token: string): JwtPayload | string {
+    const response = verify(token, this.secret_key);
+    return response;
   }
 }
 
