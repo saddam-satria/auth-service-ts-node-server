@@ -1,4 +1,3 @@
-import { IsEmail } from 'class-validator';
 import { Field, InputType } from 'type-graphql';
 
 @InputType({ description: 'authenticate input type' })
@@ -7,7 +6,6 @@ class AuthMutation {
   name: string;
 
   @Field({ nullable: false })
-  @IsEmail()
   email: string;
 
   @Field({ nullable: false })
