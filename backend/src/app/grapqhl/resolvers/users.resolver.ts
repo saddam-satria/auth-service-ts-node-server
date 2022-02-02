@@ -1,17 +1,20 @@
 import UsersRepository from '../../repositories/users.repository';
-import { Query, Resolver } from 'type-graphql';
+import { Arg, Query, Resolver } from 'type-graphql';
 import { getCustomRepository } from 'typeorm';
 import UsersEntity from '../../../entities/Users';
+import jwtHelper from '../../helpers/jwt.helper';
 
 @Resolver()
 class UsersResolver {
   private usersRepo = getCustomRepository(UsersRepository);
   @Query(() => [UsersEntity], { description: 'get all users', name: 'users' })
-  async getAllUser(): Promise<UsersEntity[]> {
+  async getAllUser(@Arg('accessToken') token: string): Promise<UsersEntity[] | void> {
     try {
+      jwtHelper.verifyToken(token);
       return await this.usersRepo.find();
     } catch (error) {
-      return error.message;
+      if (error.message.includes('invalid token')) throw new Error('invalid token');
+      if (error.message.includes('jwt expired')) throw new Error('token expired');
     }
   }
 
