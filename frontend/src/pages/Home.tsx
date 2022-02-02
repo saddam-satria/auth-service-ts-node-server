@@ -1,7 +1,17 @@
-import React from 'react';
+import { UsersQuery } from '../graphql/queries/users.query';
+import GetDataHook from '../hooks/getData.hook';
 
 const Home: React.FC = (): JSX.Element => {
-  return <h1>Hello</h1>;
+  const response = GetDataHook(UsersQuery);
+
+  return (
+    <h1>
+      {response &&
+        response.users.map((user) => {
+          return user.name;
+        })}
+    </h1>
+  );
 };
 
 export default Home;
