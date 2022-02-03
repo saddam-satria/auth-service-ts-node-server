@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import express from 'express';
+import express, { Response, Request } from 'express';
 import cors from 'cors';
 import routes from './app/config/router';
 import path from 'path';
@@ -8,6 +8,8 @@ import { ApolloServer } from 'apollo-server-express';
 import { ApolloServerPluginLandingPageGraphQLPlayground } from 'apollo-server-core';
 import schema from './app/grapqhl/schema';
 import { createConnection } from 'typeorm';
+
+import passport from './app/config/passport';
 
 (async () => {
   const app = express();
@@ -18,6 +20,25 @@ import { createConnection } from 'typeorm';
   app.use('/static', express.static(path.join(__dirname, '../public')));
   app.use(express.json());
   app.use(routes);
+
+  app.use(passport.initialize());
+  app.get(
+    '/google',
+    passport.authenticate('google', {
+      scope: ['email', 'profile'],
+    })
+  );
+  app.get(
+    '/google/redirect',
+    passport.authenticate('google', {
+      scope: ['email', 'profile'],
+    }),
+    (req: Request, res: Response) => {
+      const user: any = req.user;
+
+      res.json({ user }).status(200);
+    }
+  );
 
   const apolloServer = new ApolloServer({
     schema: await schema(),
