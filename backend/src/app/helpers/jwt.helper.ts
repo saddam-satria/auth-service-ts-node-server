@@ -14,7 +14,7 @@ class JWTHelper implements IJWTHelper {
   constructor() {
     config();
   }
-  public refreshToken(payload: IPayload): string {
+  public refreshToken(payload: IPayload | JwtPayload): string {
     return sign(payload, this.secret_key, {
       expiresIn: '14d',
     });
