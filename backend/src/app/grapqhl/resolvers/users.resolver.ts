@@ -1,23 +1,17 @@
 import UsersRepository from '../../repositories/users.repository';
-import { Arg, Query, Resolver } from 'type-graphql';
+import { Query, Resolver, UseMiddleware } from 'type-graphql';
 import { getCustomRepository } from 'typeorm';
 import UsersEntity from '../../../entities/Users';
-import jwtHelper from '../../helpers/jwt.helper';
+import authMiddleware from '../middlewares/auth.middleware';
 
 @Resolver()
 class UsersResolver {
   private usersRepo = getCustomRepository(UsersRepository);
   @Query(() => [UsersEntity], { description: 'get all users', name: 'users' })
-  async getAllUser(@Arg('accessToken') token: string): Promise<UsersEntity[] | void> {
-    try {
-      jwtHelper.verifyToken(token);
-      return await this.usersRepo.find();
-    } catch (error) {
-      if (error.message.includes('invalid token')) throw new Error('invalid token');
-      if (error.message.includes('jwt expired')) throw new Error('token expired');
-    }
+  @UseMiddleware(authMiddleware)
+  async getAllUser(): Promise<UsersEntity[] | void> {
+    return await this.usersRepo.find();
   }
-
   // auth service container doesn't have to query users
 
   // @Query(() => UsersEntity, { description: 'user by email', name: 'userByEmail' })
