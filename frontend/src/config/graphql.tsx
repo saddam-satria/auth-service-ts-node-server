@@ -4,7 +4,7 @@ import { SERVER_URL } from './constant';
 
 const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
-  uri: SERVER_URL,
+  uri: `${SERVER_URL}/graphql`,
 });
 
 const apolloWrapper: React.FC<ReactNode> = ({ children }): JSX.Element => {
