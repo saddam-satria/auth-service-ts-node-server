@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import { RequiredToken } from './pages/protected/RequiredToken';
 import { Authenticated } from './pages/protected/Authenticated';
+import RedirectGoogleAuth from './pages/Redirect';
 
 const App: React.FC = (): JSX.Element => {
   return (
@@ -35,6 +36,7 @@ const App: React.FC = (): JSX.Element => {
               </Authenticated>
             }
           />
+          <Route path="/auth/google/redirect" element={<RedirectGoogleAuth />} />
         </Routes>
       </Router>
     </>
