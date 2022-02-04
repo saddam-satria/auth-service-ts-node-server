@@ -6,9 +6,13 @@ import useAuth from '../hooks/auth.hook';
 const GetDataHook = (query: any) => {
   const currentToken = useAuth() as any;
 
+  const customHeader: { Authorization: string } = {
+    Authorization: `Bearer ${currentToken.accessToken}`,
+  };
+
   const { data, error } = useQuery(query, {
-    variables: {
-      accessToken: currentToken.accessToken,
+    context: {
+      headers: customHeader,
     },
   });
 
