@@ -3,8 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { registerMutation } from '../graphql/mutations/register.mutation';
 import { userContext } from '../context/user.context';
-import axios from '../config/axios';
-import { SERVER_URL } from '../config/constant';
+import GoogleButton from '../hooks/useGoogleButton.hook';
 
 interface IUser {
   name: string;
@@ -40,29 +39,6 @@ const Register: React.FC = (): JSX.Element => {
       return setFailedLogin(true);
     }
   }, [navigate, action, data, error]);
-
-  const googleSignIn = (_e: any) => {
-    const newWindow = window.open(`${SERVER_URL}/google`, '__blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
-    let timer = null;
-    if (newWindow) {
-      timer = setInterval(() => {
-        if (newWindow.closed) {
-          axios
-            .get('/google/data', { withCredentials: true })
-            .then((res) => res.data)
-            .then((data) => {
-              if (!data) return navigate('/register');
-
-              return action.login(data.accessToken, data.refreshToken);
-            })
-            .catch((err) => console.log(err));
-          if (timer) {
-            clearInterval(timer);
-          }
-        }
-      }, 500);
-    }
-  };
 
   return (
     <>
@@ -110,9 +86,7 @@ const Register: React.FC = (): JSX.Element => {
                 >
                   Register
                 </button>
-                <button onClick={googleSignIn} className="py-2 rounded-xl capitalize bg-red-500 text-white">
-                  Google
-                </button>
+                <GoogleButton />
               </div>
             </div>
           </div>
