@@ -25,4 +25,7 @@ services:
       - POSTGRES_DATABASE=users
       - NODE_ENV=production
       - SECRET_TOKEN=asdasdawdadawadwad
+      - GOOGLE_CLIENT_SECRET=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
+      - GOOGLE_CLIENT_ID=422284652160-vggkqd8a3mq1bbf97l62t04pilram11u.apps.googleusercontent.com
+      - CLIENT_URL=http://localhost:3000
     container_name: ts-node-server
